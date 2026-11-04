@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miztoys 2026 Catalog</title>
+<meta name="description" content="Authentic anime figures in Pasay, PH. On-hand Super Sale and Still in Japan reserves. Browse and message Miz Toys to reserve.">
+<meta property="og:title" content="Miz Toys 2026 Catalog"><meta property="og:description" content="Authentic anime figures in Pasay, PH. Browse on-hand figures and Japan reserves, then message us to reserve.">
+<meta name="theme-color" content="#673538">
+<style>
+html,body{margin:0;height:100%;background:#2a1416;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+#ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;box-sizing:border-box;background:radial-gradient(circle at 50% 40%,#673538,#2a1416 70%)}
+#ld b{font-size:30px;letter-spacing:.02em}#ld small{opacity:.75;font-size:14px}
+.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.2);border-top-color:#fff;animation:s 0.9s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+#ld a{color:#fff;background:#1877f2;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:700}
+</style></head><body>
+<div id="ld"><div class="sp"></div><b>Miz Toys</b><small>Loading the 2026 catalog…</small></div>
+<script>
+(function(){
+var API="https://script.google.com/macros/s/AKfycbxwr79xgsuR2vhVF7yKa4t3xOW88a_MFa2qlF28XVNGrrLu1G4iklCrQvLhioClRDRC/exec";
+function get(q,n){n=n||0;return fetch(API+"?"+q,{credentials:"omit"}).then(function(r){if(!r.ok)throw new Error(r.status);return r.text()})
+  .catch(function(e){if(n<2)return new Promise(function(ok){setTimeout(ok,1200*(n+1))}).then(function(){return get(q,n+1)});throw e})}
+var qs=new URLSearchParams(location.search),card=qs.get("card");
+var pre={getCatalog:get("api=catalog")};
+if(card)pre.getCard=get("api=card&code="+encodeURIComponent(card));
+window.__miz={API:API,pre:pre,get:get};
+get("api=page").then(function(html){
+  var shim='<script>(function(){var M=window.__miz;'+
+   'function call(fn,a,ok,fail){var p=M.pre[fn]&&(fn!=="getCard"||a[0]===new URLSearchParams(location.search).get("card"))?M.pre[fn]:null;if(p)delete M.pre[fn];'+
+   'p=p||M.get(fn==="getCatalog"?"api=catalog":"api=card&code="+encodeURIComponent(a[0]||""));p.then(function(t){JSON.parse(t);ok&&ok(t)}).catch(function(e){fail&&fail(e)})}'+
+   'function R(ok,fail){return{withSuccessHandler:function(h){return R(h,fail)},withFailureHandler:function(h){return R(ok,h)},getCatalog:function(){call("getCatalog",[],ok,fail)},getCard:function(c){call("getCard",[c],ok,fail)}}}'+
+   'window.google={script:{get run(){return R(null,null)},url:{getLocation:function(cb){var p={};new URLSearchParams(location.search).forEach(function(v,k){p[k]=v});cb({parameter:p})}}}};})();<\/script>';
+  html=html.replace(/<head>/i,'<head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Miztoys 2026 Catalog</title>'+shim);
+  document.open();document.write(html);document.close();
+}).catch(function(){
+  document.getElementById("ld").innerHTML='<b>Miz Toys</b><small>The catalog is taking too long to load. Please check your connection and try again.</small><a href="javascript:location.reload()">Try again</a>';
+});
+})();
+</script>
+</body></html>
