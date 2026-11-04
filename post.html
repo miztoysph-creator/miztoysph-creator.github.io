@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miz Toys Post Maker</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#1b0d0e;--card:#2a1517;--line:#43282b;--ink:#f6eded;--muted:#c7aeb0;--accent:#e3a1a7;--brand:#673538}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 Figtree,system-ui,-apple-system,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--brand);padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+header b{font-size:18px}header small{display:block;opacity:.8;font-size:12px}
+main{max-width:980px;margin:0 auto;padding:16px;display:grid;gap:16px}
+@media(min-width:860px){main{grid-template-columns:1fr 420px;align-items:start}#prevBox{position:sticky;top:76px}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+h2{font-size:15px;margin:0 0 10px;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.seg button,.chip{border:1px solid var(--line);background:#1f1012;color:var(--ink);border-radius:999px;padding:8px 14px;font:700 14px Figtree,sans-serif;cursor:pointer}
+.seg button[aria-pressed=true],.chip[aria-pressed=true]{background:var(--accent);color:#2a1214;border-color:var(--accent)}
+input[type=text],input[type=search],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#1f1012;color:var(--ink);font:500 15px Figtree,sans-serif}
+label.t{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;max-height:62vh;overflow:auto;padding:2px}
+.it{position:relative;border:2px solid var(--line);border-radius:12px;overflow:hidden;background:#1f1012;cursor:pointer;text-align:left;color:var(--ink);padding:0;font:inherit}
+.it img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:#3a2326}
+.it div{padding:6px 8px;font-size:12.5px;line-height:1.25}.it b{display:block;font-size:13px}
+.it .n{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.55);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.it[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}.it[aria-pressed=true] .n{background:var(--accent);color:#2a1214;border-color:var(--accent)}
+.it .tag{position:absolute;top:6px;right:6px;font-size:10.5px;font-weight:800;padding:3px 7px;border-radius:999px;background:rgba(0,0,0,.6)}
+#prev{width:100%;border-radius:12px;display:block;background:#000}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:#1877f2;color:#fff;font:800 16px Figtree,sans-serif;cursor:pointer;margin-top:10px}
+.btn:disabled{opacity:.5}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:10px;text-align:center}
+#ov img{max-width:100%;max-height:78vh;border-radius:10px}#ov button{background:#fff;color:#000;border:0;border-radius:10px;padding:10px 18px;font-weight:800}
+</style></head><body>
+<header><div><b>Miz Toys · Post maker</b><small>Pick figures → choose a style → save the image</small></div></header>
+<main>
+<section class="box">
+  <h2>1 · Pick figures (up to 6)</h2>
+  <div class="row seg" id="flt"><button data-f="new" aria-pressed="true">Newest</button><button data-f="ph" aria-pressed="false">On hand</button><button data-f="jp" aria-pressed="false">In Japan</button><button data-f="all" aria-pressed="false">All</button></div>
+  <input type="search" id="q" placeholder="Search name, anime or brand">
+  <p class="hint" id="cnt">Loading figures…</p>
+  <div id="list"></div>
+</section>
+<section class="box" id="prevBox">
+  <h2>2 · Style</h2>
+  <div class="row seg" id="fmt"><button data-v="post" aria-pressed="true">Feed post</button><button data-v="story" aria-pressed="false">Story</button><button data-v="square" aria-pressed="false">Square</button></div>
+  <label class="t" for="head">Headline</label>
+  <select id="headSel"><option>NEW ARRIVALS</option><option>JUST LANDED</option><option>ON HAND · SHIPS TODAY</option><option>STILL IN JAPAN · RESERVE NOW</option><option>LAST PIECES</option><option value="__">Custom…</option></select>
+  <input type="text" id="head" value="NEW ARRIVALS" maxlength="34" style="margin-top:8px" hidden>
+  <label class="t" for="sub">Small line</label>
+  <input type="text" id="sub" value="Authentic anime figures · Pasay, PH" maxlength="60">
+  <div class="row" style="margin-top:10px"><button class="chip" id="showPrice" aria-pressed="true">Show prices</button><button class="chip" id="showLeft" aria-pressed="true">Show "last one"</button></div>
+  <h2 style="margin-top:14px">3 · Preview</h2>
+  <canvas id="prev" width="1080" height="1350"></canvas>
+  <button class="btn" id="save" disabled>Save image</button>
+  <p class="hint">On iPhone: tap Save image, then “Save Image” in the share sheet. If nothing happens, long-press the image to save it.</p>
+</section>
+</main>
+<div id="ov"><img id="ovImg" alt="Your post"><p>Long-press the image and choose <b>Save to Photos</b>.</p><button id="ovX">Done</button></div>
+<script>
+(function(){
+const API="https://script.google.com/macros/s/AKfycbxwr79xgsuR2vhVF7yKa4t3xOW88a_MFa2qlF28XVNGrrLu1G4iklCrQvLhioClRDRC/exec";
+const SITE="miztoysph-creator.github.io";
+const $=s=>document.querySelector(s);
+const peso=n=>"₱"+Math.round(Number(n)||0).toLocaleString("en-PH");
+const photo=(id,w)=>"https://lh3.googleusercontent.com/d/"+encodeURIComponent(id)+"=w"+(w||600);
+let items=[],pick=[],flt="new",q="",fmt="post",hero=null,imgCache={};
+const S={post:[1080,1350],story:[1080,1920],square:[1080,1080]};
+function get(p,n){n=n||0;return fetch(API+"?"+p,{credentials:"omit"}).then(r=>{if(!r.ok)throw 0;return r.text()}).catch(e=>{if(n<2)return new Promise(ok=>setTimeout(ok,1200*(n+1))).then(()=>get(p,n+1));throw e})}
+function loadImg(src){if(imgCache[src])return imgCache[src];return imgCache[src]=new Promise(ok=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=src})}
+get("api=catalog").then(t=>{const d=JSON.parse(t);items=(d.items||[]).filter(x=>x.photoId&&x.left>0);drawList();render()}).catch(()=>{$("#cnt").textContent="Couldn't load figures. Check your connection and refresh."});
+get("api=page").then(h=>{const m=[...h.matchAll(/<img src="(data:image\/[^"]+)"/g)].map(x=>x[1]);if(m[1])loadImg(m[1]).then(i=>{hero=i;render()})}).catch(()=>{});
+function filtered(){let L=items.slice();if(flt==="ph")L=L.filter(x=>!x.jp);if(flt==="jp")L=L.filter(x=>x.jp);
+  if(q)L=L.filter(x=>(x.name+" "+x.series+" "+x.maker+" "+x.character).toLowerCase().includes(q));
+  L.sort((a,b)=>(b.added||0)-(a.added||0));if(flt==="new")L=L.slice(0,60);return L}
+function drawList(){const L=filtered();$("#cnt").textContent=L.length+" figure"+(L.length===1?"":"s")+(flt==="new"?" · newest first":"")+" · "+pick.length+"/6 picked";
+  $("#list").innerHTML=L.map(x=>{const i=pick.findIndex(p=>p.ref===x.ref);return `<button class="it" data-ref="${x.ref}" aria-pressed="${i>=0}"><img loading="lazy" src="${photo(x.photoId,300)}" alt=""><span class="n">${i>=0?i+1:"+"}</span><span class="tag">${x.jp?"✈ Japan":"On hand"}</span><div><b>${esc(x.name)}</b>${peso(x.price)}${x.left===1?" · last one":""}</div></button>`}).join("")}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+$("#list").addEventListener("click",e=>{const b=e.target.closest(".it");if(!b)return;const x=items.find(i=>i.ref===b.dataset.ref);const k=pick.findIndex(p=>p.ref===x.ref);
+  if(k>=0)pick.splice(k,1);else{if(pick.length>=6){alert("Up to 6 figures per image.");return}pick.push(x)}drawList();render()});
+$("#flt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;flt=b.dataset.f;[...$("#flt").children].forEach(c=>c.setAttribute("aria-pressed",c===b));drawList()});
+$("#fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;fmt=b.dataset.v;[...$("#fmt").children].forEach(c=>c.setAttribute("aria-pressed",c===b));render()});
+$("#q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();drawList()});
+$("#headSel").addEventListener("change",e=>{const v=e.target.value;$("#head").hidden=v!=="__";if(v!=="__")$("#head").value=v;else $("#head").focus();render()});
+["#head","#sub"].forEach(s=>$(s).addEventListener("input",()=>render()));
+["#showPrice","#showLeft"].forEach(s=>$(s).addEventListener("click",e=>{const b=e.currentTarget;b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true");render()}));
+function rr(x,c,X,Y,W,H,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+W,Y,X+W,Y+H,r);x.arcTo(X+W,Y+H,X,Y+H,r);x.arcTo(X,Y+H,X,Y,r);x.arcTo(X,Y,X+W,Y,r);x.closePath()}
+function cover(x,img,X,Y,W,H){const s=Math.max(W/img.width,H/img.height),w=img.width*s,h=img.height*s;x.drawImage(img,X+(W-w)/2,Y+(H-h)/2,w,h)}
+function star(x,cx,cy,r,col){x.save();x.fillStyle=col;x.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4,rr2=i%2?r*.28:r;x.lineTo(cx+Math.cos(a-Math.PI/2)*rr2,cy+Math.sin(a-Math.PI/2)*rr2)}x.closePath();x.fill();x.restore()}
+function wrap(x,t,maxW,lines){const w=String(t).split(/\s+/),out=[];let cur="";for(const word of w){const tr=cur?cur+" "+word:word;if(x.measureText(tr).width<=maxW)cur=tr;else{if(cur)out.push(cur);cur=word}}if(cur)out.push(cur);
+  if(out.length>lines){out.length=lines;let l=out[lines-1];while(x.measureText(l+"…").width>maxW&&l.length)l=l.slice(0,-1);out[lines-1]=l+"…"}return out}
+function fit(x,t,font,size,maxW){let s=size;do{x.font=font.replace("$",s);s-=2}while(x.measureText(t).width>maxW&&s>20);return s+2}
+let tok=0;
+async function render(){const my=++tok,[W,H]=S[fmt],cv=$("#prev");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  try{await document.fonts.load('800 80px "Bricolage Grotesque"');await document.fonts.load('800 30px Figtree')}catch(_){}
+  const imgs=await Promise.all(pick.map(p=>loadImg(photo(p.photoId,900))));if(my!==tok)return;
+  // background
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a0f12");g.addColorStop(.45,"#5a2b2f");g.addColorStop(1,"#1a0809");x.fillStyle=g;x.fillRect(0,0,W,H);
+  const rg=x.createRadialGradient(W*.5,H*.35,10,W*.5,H*.35,W*.8);rg.addColorStop(0,"rgba(227,161,167,.28)");rg.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=rg;x.fillRect(0,0,W,H);
+  let sd=7;const rnd=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};for(let i=0;i<46;i++)star(x,rnd()*W,rnd()*H,4+rnd()*14,["rgba(255,255,255,.55)","rgba(255,214,140,.6)","rgba(247,143,224,.5)"][i%3]);
+  const P=48;let y=P;
+  // banner
+  const bh=fmt==="story"?380:fmt==="square"?220:280;
+  if(hero){x.save();rr(x,0,P,y,W-2*P,bh,28);x.clip();cover(x,hero,P,y,W-2*P,bh);x.restore();x.strokeStyle="rgba(255,214,190,.55)";x.lineWidth=3;rr(x,0,P,y,W-2*P,bh,28);x.stroke()}
+  else{x.fillStyle="#fff";x.font='800 96px "Bricolage Grotesque",sans-serif';x.textAlign="center";x.fillText("Miz Toys",W/2,y+bh/2+30)}
+  y+=bh+(fmt==="square"?34:48);
+  // headline
+  const head=($("#head").value||"NEW ARRIVALS").toUpperCase();x.textAlign="center";x.textBaseline="alphabetic";
+  const hs=fit(x,head,'800 $px "Bricolage Grotesque",Figtree,sans-serif',fmt==="square"?74:92,W-2*P);
+  const hg=x.createLinearGradient(0,y-hs,0,y);hg.addColorStop(0,"#fff7c2");hg.addColorStop(.6,"#ffc93c");hg.addColorStop(1,"#e38b2c");
+  x.shadowColor="rgba(0,0,0,.45)";x.shadowOffsetY=5;x.shadowBlur=10;x.fillStyle=hg;x.fillText(head,W/2,y+hs*.78);x.shadowColor="transparent";y+=hs*.78+16;
+  const sub=$("#sub").value.trim();if(sub){x.font='700 30px Figtree,sans-serif';x.fillStyle="#f3dcdf";x.fillText(sub,W/2,y+28);y+=46}
+  y+=(fmt==="square"?14:26);
+  // footer area
+  const fh=fmt==="square"?118:150,fy=H-P-fh;
+  // grid
+  const n=pick.length,gw=W-2*P,gh=fy-24-y;
+  if(!n){x.fillStyle="rgba(255,255,255,.08)";rr(x,0,P,y,gw,gh,26);x.fill();x.fillStyle="#f3dcdf";x.font='700 34px Figtree,sans-serif';x.fillText("Pick figures on the left to fill this space",W/2,y+gh/2)}
+  else{let cols=n===1?1:n<=4?2:3;if(fmt==="story")cols=n<=2?1:2;if(fmt==="square"&&n===2)cols=2;const rows=Math.ceil(n/cols),gap=22,cw=(gw-gap*(cols-1))/cols,ch=(gh-gap*(rows-1))/rows;
+    for(let i=0;i<n;i++){const p=pick[i],img=imgs[i],r=Math.floor(i/cols),c=i%cols;let cx=P+c*(cw+gap);const inRow=Math.min(cols,n-r*cols);if(inRow<cols)cx+=(cols-inRow)*(cw+gap)/2;const cy=y+r*(ch+gap);
+      x.save();x.shadowColor="rgba(0,0,0,.45)";x.shadowBlur=24;x.shadowOffsetY=10;x.fillStyle="#fffaf6";rr(x,0,cx,cy,cw,ch,24);x.fill();x.restore();
+      const showP=$("#showPrice").getAttribute("aria-pressed")==="true",info=Math.max(showP?120:90,Math.min(ch*.36,showP?190:130)),ph=ch-info;
+      x.save();rr(x,0,cx,cy,cw,ch,24);x.clip();x.beginPath();x.rect(cx,cy,cw,ph);x.clip();x.fillStyle="#efe3e4";x.fillRect(cx,cy,cw,ph);if(img)cover(x,img,cx,cy,cw,ph);x.restore();
+      // tag
+      const tag=p.jp?"✈ FROM JAPAN":"ON HAND";x.font='800 '+Math.round(Math.max(18,Math.min(26,cw/14)))+'px Figtree,sans-serif';const tw=x.measureText(tag).width+28,th=Math.max(34,Math.min(44,cw/9));
+      x.fillStyle=p.jp?"rgba(30,40,70,.85)":"rgba(198,40,40,.92)";rr(x,0,cx+14,cy+14,tw,th,th/2);x.fill();x.fillStyle="#fff";x.textAlign="left";x.fillText(tag,cx+28,cy+14+th*.68);
+      if($("#showLeft").getAttribute("aria-pressed")==="true"&&p.left===1){const t2="LAST ONE";const w2=x.measureText(t2).width+28;x.fillStyle="rgba(255,201,60,.95)";rr(x,0,cx+cw-14-w2,cy+14,w2,th,th/2);x.fill();x.fillStyle="#3a2200";x.fillText(t2,cx+cw-w2,cy+14+th*.68)}
+      // text
+      const fs=Math.round(Math.max(18,Math.min(38,cw/12,info/(showP?4.4:3.6))));x.font='800 '+fs+'px Figtree,sans-serif';x.fillStyle="#2a1214";x.textAlign="left";
+      const lines=wrap(x,p.name,cw-36,showP?2:3);lines.forEach((l,k)=>x.fillText(l,cx+18,cy+ph+fs*1.15+k*fs*1.12));
+      if(showP){const ps=Math.round(fs*1.15);x.font='800 '+ps+'px "Bricolage Grotesque",Figtree,sans-serif';x.fillStyle="#673538";x.fillText(peso(p.price),cx+18,cy+ch-18)}}}
+  // footer CTA
+  x.fillStyle="#1877f2";rr(x,0,P,fy,gw,fh*.56,fh*.28);x.fill();x.fillStyle="#fff";x.textAlign="center";x.font='800 '+(fmt==="square"?32:38)+'px Figtree,sans-serif';x.fillText("💬 Message Miz Toys to reserve",W/2,fy+fh*.56*.66);
+  x.font='700 '+(fmt==="square"?24:28)+'px Figtree,sans-serif';x.fillStyle="#f3dcdf";x.fillText("Browse all figures: "+SITE,W/2,fy+fh*.56+(fmt==="square"?40:48));
+  $("#save").disabled=!n}
+$("#save").addEventListener("click",()=>{const cv=$("#prev");cv.toBlob(async b=>{if(!b)return;const name="miztoys-"+(($("#head").value||"post").toLowerCase().replace(/[^a-z0-9]+/g,"-"))+"-"+fmt+".png",f=new File([b],name,{type:"image/png"});
+  try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:"Miz Toys post"});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  $("#ovImg").src=u;$("#ov").style.display="flex"},"image/png")});
+$("#ovX").addEventListener("click",()=>{$("#ov").style.display="none"});
+render();
+})();
+</script>
+</body></html>
