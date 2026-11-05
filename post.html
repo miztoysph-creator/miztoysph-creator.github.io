@@ -31,6 +31,14 @@ label.t{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px;font-we
 .btn:disabled{opacity:.5}
 .hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
 #ov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:10px;text-align:center}
+textarea#cap{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#1f1012;color:var(--ink);font:500 14px/1.45 Figtree,sans-serif;resize:vertical}
+:root{--bg:#0B0920;--card:#16123A;--line:#2B2558;--ink:#EEE9FF;--muted:#A9A1D3;--accent:#B26BFF;--brand:#24145A}
+html,body{background:radial-gradient(900px 600px at 0% 0%,rgba(122,44,140,.35),transparent 70%),radial-gradient(900px 700px at 100% 100%,rgba(29,111,209,.25),transparent 70%),#0B0920;background-attachment:fixed}
+header{background:linear-gradient(115deg,#2D1466 0%,#1D1350 48%,#0F2A4A 100%);box-shadow:0 2px 18px rgba(0,0,0,.5),inset 0 -1px 0 rgba(56,200,255,.4)}
+.seg button,.chip,input[type=text],input[type=search],select,.it,textarea#cap{background:#120E2E}
+.seg button[aria-pressed=true],.chip[aria-pressed=true]{background:linear-gradient(135deg,#B26BFF,#7A2C8C);color:#fff;border-color:transparent}
+.it[aria-pressed=true] .n{color:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#38C8FF;box-shadow:0 0 0 3px rgba(56,200,255,.22)}
 #ov img{max-width:100%;max-height:78vh;border-radius:10px}#ov button{background:#fff;color:#000;border:0;border-radius:10px;padding:10px 18px;font-weight:800}
 </style></head><body>
 <header><div><b>Miz Toys · Post maker</b><small>Pick figures → choose a style → save the image</small></div></header>
@@ -55,6 +63,11 @@ label.t{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px;font-we
   <canvas id="prev" width="1080" height="1350"></canvas>
   <button class="btn" id="save" disabled>Save image</button>
   <p class="hint">On iPhone: tap Save image, then “Save Image” in the share sheet. If nothing happens, long-press the image to save it.</p>
+  <h2 style="margin-top:18px">4 · Caption</h2>
+  <div class="row seg" id="capLang"><button data-l="en" aria-pressed="true">English</button><button data-l="tl" aria-pressed="false">Taglish</button></div>
+  <textarea id="cap" rows="12" aria-label="Caption" placeholder="Pick figures and the caption writes itself."></textarea>
+  <button class="btn" id="copyCap" style="background:linear-gradient(135deg,#B26BFF,#7A2C8C)">Copy caption</button>
+  <p class="hint">Paste it under your Facebook or Instagram post. You can edit it here first.</p>
 </section>
 </main>
 <div id="ov"><img id="ovImg" alt="Your post"><p>Long-press the image and choose <b>Save to Photos</b>.</p><button id="ovX">Done</button></div>
@@ -140,6 +153,28 @@ $("#save").addEventListener("click",()=>{const cv=$("#prev");cv.toBlob(async b=>
   const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
   $("#ovImg").src=u;$("#ov").style.display="flex"},"image/png")});
 $("#ovX").addEventListener("click",()=>{$("#ov").style.display="none"});
+let capLang="en",capEdited=false;
+const HASH={"Ichiban Kuji":/ichiban\s*kuji|一番くじ/i,"Grandista":/grandista/i,"Maximatic":/maximatic/i,"Banpresto":/banpresto/i,"PopUpParade":/pop\s*up\s*parade/i,"Nendoroid":/nendoroid/i,"SHFiguarts":/figuarts/i};
+function tagOf(t){return "#"+String(t).replace(/[^A-Za-z0-9]/g,"")}
+function caption(){const L=pick;if(!L.length)return "";const tl=capLang==="tl",head=($("#head").value||"NEW ARRIVALS").trim();
+ const lines=[`✨ ${head} ✨`,"",tl?(L.length>1?"Available na po ang mga ito:":"Available na po ito:"):(L.length>1?"Now available:":"Now available:")];
+ L.forEach(x=>{let p=x.price?peso(x.price):"";if(x.ev&&x.was>x.price)p+=` (was ${peso(x.was)}, ${x.ev} -${x.off}%)`;
+  lines.push(`• ${x.name}${p?" · "+p:""}${x.left===1?(tl?" · LAST ONE na lang!":" · LAST ONE!"):""}${x.jp?(tl?" · ✈ nasa Japan pa":" · ✈ still in Japan"):""}`)});
+ lines.push("");const ph=L.some(x=>!x.jp),jp=L.some(x=>x.jp);
+ if(ph)lines.push(tl?"📦 On hand: pwedeng i-ship today from Pasay (Lalamove · LBC · J&T · Flash)":"📦 On hand: ships from Pasay via Lalamove · LBC · J&T · Flash");
+ if(jp)lines.push(tl?"✈ Still in Japan: reserve na with 50% downpayment":"✈ Still in Japan: reserve with a 50% downpayment");
+ lines.push(tl?"💳 GCash lang po":"💳 GCash only");
+ lines.push(tl?"💬 PM lang po para ma-reserve!":"💬 Message us to reserve!");
+ lines.push(L.length===1?(tl?"🔗 Tingnan dito: ":"🔗 See it here: ")+"https://"+SITE+"/?f="+L[0].ref:(tl?"🛒 Tingnan lahat ng figures: ":"🛒 Browse all figures: ")+"https://"+SITE);
+ const tags=["#MizToys","#AnimeFigures","#FigurePH"];
+ L.forEach(x=>{const t=(x.name+" "+x.maker);for(const k in HASH)if(HASH[k].test(t))tags.push(tagOf(k));if(x.series)tags.push(tagOf(x.series))});
+ if(L.some(x=>x.ev))tags.push(tagOf(L.find(x=>x.ev).ev));
+ lines.push("",[...new Set(tags.filter(t=>t.length>2))].slice(0,10).join(" "));return lines.join("\n")}
+let capKey="";function capUpd(){const k=pick.map(x=>x.ref).join(",")+"|"+$("#head").value+"|"+capLang;if(k!==capKey){capKey=k;capEdited=false}if(capEdited)return;$("#cap").value=caption()}
+$("#cap").addEventListener("input",()=>{capEdited=true});
+$("#capLang").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;capLang=b.dataset.l;[...$("#capLang").children].forEach(c=>c.setAttribute("aria-pressed",c===b));capUpd()});
+$("#copyCap").addEventListener("click",async()=>{const t=$("#cap").value;if(!t){return}let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(_){const a=$("#cap");a.select();try{ok=document.execCommand("copy")}catch(_){}}const b=$("#copyCap");b.textContent=ok?"Copied! ✓":"Select the text and copy";setTimeout(()=>b.textContent="Copy caption",1800)});
+const _render=render;render=function(){capUpd();return _render.apply(this,arguments)};
 render();
 })();
 </script>
