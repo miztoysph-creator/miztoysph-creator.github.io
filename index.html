@@ -4,19 +4,21 @@
 <title>Miztoys 2026 Catalog</title>
 <meta name="description" content="Authentic anime figures in Pasay, PH. On-hand Super Sale and Still in Japan reserves. Browse and message Miz Toys to reserve.">
 <meta property="og:title" content="Miz Toys 2026 Catalog"><meta property="og:description" content="Authentic anime figures in Pasay, PH. Browse on-hand figures and Japan reserves, then message us to reserve.">
-<meta name="theme-color" content="#673538">
+<meta name="theme-color" content="#0B0920"><link rel="icon" type="image/png" href="https://miztoysph-creator.github.io/icon.png"><link rel="apple-touch-icon" href="https://miztoysph-creator.github.io/icon.png"><meta name="apple-mobile-web-app-title" content="Miz Toys">
 <meta property="og:type" content="website"><meta property="og:url" content="https://miztoysph-creator.github.io/"><meta property="og:site_name" content="Miz Toys">
 <meta property="og:image" content="https://miztoysph-creator.github.io/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Miz Toys Hunter and Starlight loyalty cards">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-html,body{margin:0;height:100%;background:#2a1416;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-#ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;box-sizing:border-box;background:radial-gradient(circle at 50% 40%,#673538,#2a1416 70%)}
+html,body{margin:0;height:100%;background:#0B0920;color:#fff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+#ld{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;box-sizing:border-box;background:radial-gradient(70% 50% at 50% 35%,#3A1866,#0B0920 70%)}
+#ld img{width:96px;height:96px;border-radius:24px;box-shadow:0 0 0 2px rgba(201,166,255,.55),0 0 40px rgba(178,107,255,.55);animation:p 1.6s ease-in-out infinite}@keyframes p{50%{transform:scale(1.05)}}
+#ld .st{color:#F6C453;letter-spacing:8px;font-size:14px}
 #ld b{font-size:30px;letter-spacing:.02em}#ld small{opacity:.75;font-size:14px}
-.sp{width:42px;height:42px;border-radius:50%;border:4px solid rgba(255,255,255,.2);border-top-color:#fff;animation:s 0.9s linear infinite}
+.sp{display:none}
 @keyframes s{to{transform:rotate(360deg)}}
-#ld a{color:#fff;background:#1877f2;padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:700}
+#ld a{color:#fff;background:linear-gradient(135deg,#B26BFF,#7A2C8C);padding:12px 18px;border-radius:12px;text-decoration:none;font-weight:700}
 </style></head><body>
-<div id="ld"><div class="sp"></div><b>Miz Toys</b><small>Loading the 2026 catalog…</small></div>
+<div id="ld"><img src="icon.png" alt=""><b>Miz Toys</b><div class="st">✦✦✦</div><small>Loading figures… ・ 読み込み中</small></div>
 <script>
 (function(){
 var API="https://script.google.com/macros/s/AKfycbxwr79xgsuR2vhVF7yKa4t3xOW88a_MFa2qlF28XVNGrrLu1G4iklCrQvLhioClRDRC/exec";
@@ -32,7 +34,7 @@ get("api=page").then(function(html){
    'p=p||M.get(fn==="getCatalog"?"api=catalog":"api=card&code="+encodeURIComponent(a[0]||""));p.then(function(t){JSON.parse(t);ok&&ok(t)}).catch(function(e){fail&&fail(e)})}'+
    'function R(ok,fail){return{withSuccessHandler:function(h){return R(h,fail)},withFailureHandler:function(h){return R(ok,h)},getCatalog:function(){call("getCatalog",[],ok,fail)},getCard:function(c){call("getCard",[c],ok,fail)}}}'+
    'window.google={script:{get run(){return R(null,null)},url:{getLocation:function(cb){var p={};new URLSearchParams(location.search).forEach(function(v,k){p[k]=v});cb({parameter:p})}}}};})();<\/script>';
-  html=html.replace(/<head>/i,'<head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Miztoys 2026 Catalog</title>'+shim);
+  html=html.replace(/<head>/i,'<head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Miztoys 2026 Catalog</title><meta name="theme-color" content="#0B0920"><link rel="icon" type="image/png" href="https://miztoysph-creator.github.io/icon.png"><link rel="apple-touch-icon" href="https://miztoysph-creator.github.io/icon.png">'+shim);
   document.open();document.write(html);document.close();
 }).catch(function(){
   document.getElementById("ld").innerHTML='<b>Miz Toys</b><small>The catalog is taking too long to load. Please check your connection and try again.</small><a href="javascript:location.reload()">Try again</a>';
